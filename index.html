@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pembelajaran Linguistik</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header-text">Belajar apa hari ini?</div>
+        
+        <div class="concepts-container">
+            <div class="concept-button concept-large" data-concept="fonologi" data-clicks="15">Fonologi</div>
+            <div class="concept-button concept-medium" data-concept="sintaksis" data-clicks="8">Sintaksis</div>
+            <div class="concept-button concept-large" data-concept="semantik" data-clicks="12">Semantik</div>
+            <div class="concept-button concept-medium" data-concept="morfologi" data-clicks="10">Morfologi</div>
+            <div class="concept-button concept-small" data-concept="pragmatik" data-clicks="5">Pragmatik</div>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" class="form-control form-control-lg" placeholder="Cari konsep linguistik..." onkeyup="showSuggestions()">
+            <div id="suggestions"></div>
+        </div>
+
+        <div class="id-link">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#idModal">Sudah pernah belajar? Masukkan ID-mu</a>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="idModal" tabindex="-1" aria-labelledby="idModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="idModalLabel">Masukkan ID Anda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="userIdInput" class="form-control" placeholder="Masukkan ID Anda" style="border-radius: 15px;">
+                    <div id="idAlert" class="alert alert-danger mt-3 d-none" role="alert" style="border-radius: 15px;">ID cek hasil pembelajaran tidak ditemukan. Silakan periksa kembali.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="validateIdButton">Konfirmasi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const concepts = ["Fonologi", "Sintaksis", "Semantik", "Morfologi", "Pragmatik", "Sosiolinguistik", "Leksikologi", "Fonetik"];
+        
+        // Data simulasi jumlah klik untuk setiap konsep
+        let conceptClicks = {
+            fonologi: 15,
+            sintaksis: 8,
+            semantik: 12,
+            morfologi: 10,
+            pragmatik: 5
+        };
+
+        function redirectToPage(concept) {
+            if (conceptClicks[concept]) {
+                conceptClicks[concept]++;
+            } else {
+                conceptClicks[concept] = 1;
+            }
+        
+            updateCloudSizes();
+        
+            // Redirect ke halaman nyata
+            window.location.href = concept.toLowerCase() + ".html";
+        }
+
+
+        function updateCloudSizes() {
+            const conceptButtons = document.querySelectorAll('.concept-button');
+            conceptButtons.forEach(button => {
+                const concept = button.getAttribute('data-concept');
+                const clicks = conceptClicks[concept] || 1;
+                
+                // Remove existing size classes
+                button.classList.remove('concept-small', 'concept-medium', 'concept-large');
+                
+                // Add appropriate size class based on clicks
+                if (clicks >= 15) {
+                    button.classList.add('concept-large');
+                } else if (clicks >= 8) {
+                    button.classList.add('concept-medium');
+                } else {
+                    button.classList.add('concept-small');
+                }
+                
+                // Update click count in data attribute
+                button.setAttribute('data-clicks', clicks);
+            });
+        }
+
+        function showSuggestions() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const suggestionsBox = document.getElementById("suggestions");
+            suggestionsBox.innerHTML = "";
+
+            if (input.length > 0) {
+                const filteredConcepts = concepts.filter(concept => concept.toLowerCase().includes(input));
+                if (filteredConcepts.length > 0) {
+                    filteredConcepts.forEach(concept => {
+                        const div = document.createElement("div");
+                        div.textContent = concept;
+                        div.onclick = () => {
+                            document.getElementById("searchInput").value = concept;
+                            suggestionsBox.innerHTML = "";
+                            redirectToPage(concept.toLowerCase());
+                        };
+                        suggestionsBox.appendChild(div);
+                    });
+                } else {
+                    const div = document.createElement("div");
+                    div.textContent = "Tidak ditemukan";
+                    suggestionsBox.appendChild(div);
+                }
+            }
+        }
+
+        // Event listeners untuk concept buttons
+        document.querySelectorAll('.concept-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const concept = this.getAttribute('data-concept');
+                redirectToPage(concept);
+            });
+        });
+
+        document.getElementById('validateIdButton').addEventListener('click', function() {
+            const userId = document.getElementById('userIdInput').value;
+            const idAlert = document.getElementById('idAlert');
+
+            if (userId.trim() === "00029") {
+                idAlert.classList.add('d-none');
+                alert(`ID ${userId} tervalidasi! Anda dapat melanjutkan.`);
+                const idModal = bootstrap.Modal.getInstance(document.getElementById('idModal'));
+                idModal.hide();
+            } else {
+                idAlert.classList.remove('d-none');
+            }
+        });
+
+        document.querySelector('.btn-close').addEventListener('click', function() {
+            const idAlert = document.getElementById('idAlert');
+            idAlert.classList.add('d-none');
+        });
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = (Math.random() * 5 + 2) + 'px';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles when page loads
+        window.addEventListener('load', createParticles);
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function(event) {
+            const searchBox = document.querySelector('.search-box');
+            if (!searchBox.contains(event.target)) {
+                document.getElementById('suggestions').innerHTML = '';
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

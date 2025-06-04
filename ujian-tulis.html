@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ujian Tulis</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    #hintButton {
+      opacity: 0;
+      transition: opacity 1s ease;
+      visibility: hidden;
+    }
+    #hintButton.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+    <h1 class="fw-light display-4 mb-3">Apa yang dimaksud fonologi?</h1>
+    <p class="text-center fw-light mb-4">Silakan tuliskan kembali apa yang telah Anda pelajari sebelumnya.</p>
+
+    <textarea id="answerInput" class="form-control mb-3" rows="8" placeholder="Tulis jawaban Anda di sini..." style="width: 80%;"></textarea>
+
+    <button type="button" class="btn btn-success btn-lg" id="submitButton">
+      Kirim Jawaban
+    </button>
+
+    <div class="d-flex gap-2 mt-2">
+      <button type="button" class="btn btn-outline-secondary" id="retryButton" disabled>
+        Pelajari Kembali (<span id="countdown">60</span>)
+      </button>
+      <button type="button" class="btn btn-outline-warning" id="hintButton">
+        <i class="bi bi-lightbulb"></i> Petunjuk
+      </button>
+    </div>
+
+    <!-- Modal Hasil Ujian -->
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="resultModalLabel">Hasil Ujian</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body" id="modalBody">Jawaban memenuhi.</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="nextButton">Selanjutnya</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Petunjuk -->
+    <div class="modal fade" id="hintModal" tabindex="-1" aria-labelledby="hintModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="hintModalLabel">Petunjuk</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body" id="hintContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Gagal -->
+    <div class="modal fade" id="failModal" tabindex="-1" aria-labelledby="failModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="failModalLabel">Jawaban Tidak Memenuhi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body">Silakan lengkapi jawaban Anda dengan benar sesuai materi.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const answerInput = document.getElementById('answerInput');
+    const submitButton = document.getElementById('submitButton');
+    const nextButton = document.getElementById('nextButton');
+    const retryButton = document.getElementById('retryButton');
+    const hintButton = document.getElementById('hintButton');
+    const countdownSpan = document.getElementById('countdown');
+    const hintContent = document.getElementById('hintContent');
+
+    const keywords = ["linguistik", "bunyi", "bahasa"];
+
+    // Cek jawaban saat tombol diklik
+    submitButton.addEventListener('click', () => {
+      const inputText = answerInput.value.toLowerCase().trim();
+      const isValid = keywords.every(keyword => inputText.includes(keyword));
+
+      if (inputText === "" || !isValid) {
+        const failModal = new bootstrap.Modal(document.getElementById('failModal'));
+        failModal.show();
+      } else {
+        const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+        resultModal.show();
+      }
+    });
+
+    // Navigasi lanjut
+    nextButton.addEventListener('click', () => {
+      window.location.href = 'ujian-lisan.html';
+    });
+
+    // Navigasi ulang ke materi
+    retryButton.addEventListener('click', () => {
+      if (!retryButton.disabled) {
+        window.location.href = 'fonologi.html';
+      }
+    });
+
+    // Tampilkan petunjuk
+    hintButton.addEventListener('click', () => {
+      const randomHint = keywords[Math.floor(Math.random() * keywords.length)];
+      hintContent.textContent = "Coba pikirkan kata ini: " + randomHint;
+      const hintModal = new bootstrap.Modal(document.getElementById('hintModal'));
+      hintModal.show();
+    });
+
+    // Countdown logic
+    let timeLeft = 60;
+    hintButton.style.display = 'none'; // sembunyikan tombol hint awalnya
+
+    const countdownInterval = setInterval(() => {
+      timeLeft--;
+      countdownSpan.textContent = timeLeft;
+
+      if (timeLeft <= 0) {
+        clearInterval(countdownInterval);
+
+        retryButton.innerHTML = "Pelajari Kembali";
+        retryButton.disabled = false;
+        retryButton.classList.remove('btn-outline-secondary');
+        retryButton.classList.add('btn-secondary');
+
+        // tampilkan tombol petunjuk dengan animasi
+        hintButton.style.display = 'inline-block';
+        hintButton.classList.add('show');
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

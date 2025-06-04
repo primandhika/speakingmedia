@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Lisan 2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .active-card {
+            background-color: #28a745 !important;
+            color: #ffffff !important;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+        <!-- Material Title -->
+        <h1 id="materialTitle" class="fw-light display-4 mb-3">Dasar Fonologi</h1>
+
+        <!-- Instructions -->
+        <p id="instructions" class="text-center fw-light mb-4">Rekam jawaban Anda dan buka setiap kartu dalam waktu yang ditentukan.</p>
+
+        <!-- Record Button -->
+        <button type="button" class="btn btn-primary btn-lg mb-3" id="recordButton">
+            <i class="bi bi-mic-fill"></i> Mulai Perekaman
+        </button>
+
+        <!-- Countdown Timer -->
+        <h4 id="timer" class="text-danger mb-3"></h4>
+
+        <!-- Active Instruction -->
+        <p id="activeInstruction" class="text-center fw-light mb-4 d-none text-success">Silakan berbicara tentang hal dari kotak yang aktif di bawah ini:</p>
+
+        <!-- Cards -->
+        <div class="row w-100" id="cardContainer">
+            <div class="col-md-3">
+                <div class="card text-center" id="card1">
+                    <div class="card-body">
+                        <h5 class="card-title">Definisi</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" id="card2">
+                    <div class="card-body">
+                        <h5 class="card-title">Ciri-ciri</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" id="card3">
+                    <div class="card-body">
+                        <h5 class="card-title">Teori</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center" id="card4">
+                    <div class="card-body">
+                        <h5 class="card-title">Contoh</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Alert -->
+        <div id="infoAlert" class="alert alert-info mt-3 d-none" role="alert">
+            Rekaman disimpan dengan <b>ID#274823</b> dan akan ditinjau oleh pengajar kelasmu. Klik Kirim jika sudah yakin dan coba lagi jika ingin mengulang.
+        </div>
+
+        <!-- Buttons Row -->
+        <div class="row w-100 mt-4">
+            <div class="col-md-6 text-end">
+                <button type="button" class="btn btn-warning btn-lg w-75 d-none" id="retryButton">Coba Lagi</button>
+            </div>
+            <div class="col-md-6 text-start">
+                <button type="button" class="btn btn-success btn-lg w-75 d-none" id="submitButton">Kirim Jawaban</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const recordButton = document.getElementById('recordButton');
+        const timerDisplay = document.getElementById('timer');
+        const instructions = document.getElementById('instructions');
+        const activeInstruction = document.getElementById('activeInstruction');
+        const submitButton = document.getElementById('submitButton');
+        const retryButton = document.getElementById('retryButton');
+        const infoAlert = document.getElementById('infoAlert');
+        const cardContainer = document.getElementById('cardContainer');
+        const cards = [
+            document.getElementById('card1'),
+            document.getElementById('card2'),
+            document.getElementById('card3'),
+            document.getElementById('card4')
+        ];
+        let countdown;
+        let dots = '';
+
+        recordButton.addEventListener('click', function() {
+            let timeLeft = 60;
+            instructions.classList.add('d-none');
+            timerDisplay.textContent = `Waktu: ${timeLeft} detik`;
+            recordButton.disabled = true;
+            activeInstruction.classList.remove('d-none');
+
+            activateCard(cards[0]);
+
+            countdown = setInterval(() => {
+                timeLeft--;
+                dots = dots.length < 3 ? dots + '.' : '';
+                recordButton.innerHTML = `<i class="bi bi-mic-fill"></i> Merekam${dots}`;
+                timerDisplay.textContent = `Waktu: ${timeLeft} detik`;
+
+                if (timeLeft === 45) switchCard(cards[1]);
+                if (timeLeft === 30) switchCard(cards[2]);
+                if (timeLeft === 15) switchCard(cards[3]);
+                if (timeLeft === 0) {
+                    clearInterval(countdown);
+                    timerDisplay.style.display = 'none';
+                    cardContainer.classList.add('hidden');
+                    recordButton.classList.add('d-none');
+                    activeInstruction.classList.add('d-none');
+                    infoAlert.classList.remove('d-none');
+                    retryButton.classList.remove('d-none');
+                    submitButton.classList.remove('d-none');
+                }
+            }, 1000);
+        });
+
+        retryButton.addEventListener('click', function() {
+            location.reload();
+        });
+
+        submitButton.addEventListener('click', function() {
+            window.location.href = 'hasil.html';
+        });
+
+        function activateCard(card) {
+            card.classList.add('active-card');
+        }
+
+        function switchCard(newCard) {
+            cards.forEach(resetCard);
+            activateCard(newCard);
+        }
+
+        function resetCard(card) {
+            card.classList.remove('active-card');
+        }
+    </script>
+</body>
+</html>

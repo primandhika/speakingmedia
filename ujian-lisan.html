@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Lisan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+        <!-- Material Title -->
+        <h1 id="materialTitle" class="fw-light display-4 mb-3">Dasar Fonologi</h1>
+
+        <!-- Instructions -->
+        <p id="instructions" class="text-center fw-light mb-4">Silakan rekam jawaban Anda terkait materi yang telah dipelajari.</p>
+
+        <!-- Record Button -->
+        <button type="button" class="btn btn-danger btn-lg mb-3" id="recordButton">
+            <i class="bi bi-mic-fill"></i> Mulai Perekaman
+        </button>
+
+        <!-- Recording Status -->
+        <p id="recordingStatus" class="fw-light mb-3"></p>
+
+        <!-- Stop Recording Button -->
+        <button type="button" class="btn btn-secondary d-none mb-3" id="stopButton">Akhiri Perekaman</button>
+
+        <!-- Rekam Ulang Button -->
+        <button type="button" class="btn btn-warning d-none mb-3" id="retryButton">Rekam Ulang</button>
+
+        <!-- Disabled Textarea for Transcription -->
+        <textarea id="transcriptionInput" class="form-control mb-3" rows="8" placeholder="Transkripsi akan muncul di sini..." style="width: 80%;" disabled></textarea>
+
+        <!-- Submit Button -->
+        <button type="button" class="btn btn-success btn-lg" id="submitButton" data-bs-toggle="modal" data-bs-target="#resultModal" disabled>
+            Kirim Jawaban
+        </button>
+
+        <!-- Result Modal -->
+        <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resultModalLabel">Hasil Ujian</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        Jawaban belum memenuhi.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="nextButton">Selanjutnya</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const recordButton = document.getElementById('recordButton');
+        const stopButton = document.getElementById('stopButton');
+        const retryButton = document.getElementById('retryButton');
+        const recordingStatus = document.getElementById('recordingStatus');
+        const transcriptionInput = document.getElementById('transcriptionInput');
+        const submitButton = document.getElementById('submitButton');
+        const nextButton = document.getElementById('nextButton');
+        const modalBody = document.getElementById('modalBody');
+
+        const keywords = ["linguistik", "bunyi", "bahasa"];
+        let recordingInterval;
+
+        // Start recording animation
+        recordButton.addEventListener('click', function() {
+            recordingStatus.textContent = 'Merekam';
+            let dots = '';
+            recordingInterval = setInterval(() => {
+                dots = dots.length < 3 ? dots + '.' : '';
+                recordingStatus.textContent = 'Merekam' + dots;
+            }, 500);
+
+            recordButton.classList.add('d-none');
+            stopButton.classList.remove('d-none');
+        });
+
+        // Stop recording and display text
+        stopButton.addEventListener('click', function() {
+            clearInterval(recordingInterval);
+            recordingStatus.textContent = '';
+            transcriptionInput.value = 'Fonologi merupakan cabang linguistik yang mempelajari bunyi-bunyi bahasa dan fungsinya dalam suatu bahasa.';
+            stopButton.classList.add('d-none');
+            retryButton.classList.remove('d-none');
+            validateInput();
+        });
+
+        // Rekam ulang
+        retryButton.addEventListener('click', function() {
+            transcriptionInput.value = '';
+            submitButton.disabled = true;
+            retryButton.classList.add('d-none');
+            recordButton.classList.remove('d-none');
+        });
+
+        // Validate input for keywords
+        function validateInput() {
+            const inputText = transcriptionInput.value.toLowerCase();
+            const isValid = keywords.every(keyword => inputText.includes(keyword));
+            submitButton.disabled = !isValid;
+            modalBody.textContent = isValid ? 'Jawaban memenuhi.' : 'Jawaban belum memenuhi.';
+        }
+
+        // Redirect to next page
+        nextButton.addEventListener('click', function() {
+            window.location.href = 'ujian-lisan2.html';
+        });
+    </script>
+</body>
+</html>
