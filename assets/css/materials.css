@@ -1,0 +1,63 @@
+.hover-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+.card.opacity-75 {
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.card.opacity-75 .card-header {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+}
+
+.floating-animation {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.badge.rounded-pill {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+@media print {
+    .btn, .navbar, #alertContainer {
+        display: none !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .card {
+        break-inside: avoid;
+    }
+}
+
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .badge {
+        font-size: 0.7rem;
+    }
+}

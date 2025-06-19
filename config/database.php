@@ -1,12 +1,9 @@
 <?php
-// /config/database.php - Konfigurasi Database
-
 return [
-    // Database configuration
     'host' => 'localhost',
     'database' => 'bicaranta_db',
     'username' => 'root',
-    'password' => '', // Kosong untuk XAMPP default
+    'password' => '', 
     'charset' => 'utf8mb4',
     'options' => [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -17,6 +14,6 @@ return [
     'timeout' => 30,
     'retry_attempts' => 3,
     
-    'debug' => true, // Set false di production
+    'debug' => true, 
 ];
 ?>

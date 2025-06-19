@@ -35,6 +35,36 @@ body {
     color: #6ea8fe;
 }
 
+/* Dark Mode Toggle Button - ADDED */
+#themeToggle {
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 2px solid #6c757d;
+    background-color: white;
+}
+
+#themeToggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Dark mode button styling */
+[data-bs-theme="dark"] #themeToggle {
+    background-color: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.3);
+    color: white;
+}
+
+[data-bs-theme="dark"] #themeToggle:hover {
+    background-color: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+}
+
+/* Theme icon styling */
+#themeIcon {
+    font-size: 1.2rem;
+}
+
 /* Floating animation */
 .floating-animation {
     animation: floating 3s ease-in-out infinite;
@@ -109,6 +139,20 @@ body {
     background-color: #495057;
 }
 
+/* Dark mode navbar and cards */
+[data-bs-theme="dark"] .navbar {
+    background-color: #212529 !important;
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+[data-bs-theme="dark"] .bg-body {
+    background-color: #212529 !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .header-text {
@@ -117,6 +161,17 @@ body {
     
     .material-icon {
         font-size: 2rem;
+    }
+    
+    #themeToggle {
+        width: 45px;
+        height: 45px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    #themeIcon {
+        font-size: 1rem;
     }
 }
 
@@ -127,5 +182,16 @@ body {
     
     .material-btn {
         padding: 1rem;
+    }
+    
+    #themeToggle {
+        width: 40px;
+        height: 40px;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    #themeIcon {
+        font-size: 0.9rem;
     }
 }

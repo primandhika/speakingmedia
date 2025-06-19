@@ -1,6 +1,15 @@
 <?php
 $currentUser = getCurrentUser();
 $userRole = getUserRole();
+$progressId = $_SESSION['progress_id'] ?? null;
+
+// Detect if we're in a subdirectory (pages folder)
+$isInSubdirectory = strpos($_SERVER['REQUEST_URI'], '/pages/') !== false;
+$basePath = $isInSubdirectory ? '../' : '';
+
+// Make variables available for included files (like modals)
+$GLOBALS['isInSubdirectory'] = $isInSubdirectory;
+$GLOBALS['basePath'] = $basePath;
 ?>
 <!DOCTYPE html>
 <html lang="id" data-bs-theme="light">
@@ -9,47 +18,43 @@ $userRole = getUserRole();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $appConfig['title']; ?></title>
     <link rel="icon" type="image/png" href="https://rbpmedia.id/assets/favicon.png">
-    
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo $basePath; ?>assets/css/style.css">
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Dark Mode Toggle Button (Bottom Right) -->
+    <button class="btn btn-outline-secondary position-fixed" id="themeToggle" title="Toggle Theme" style="bottom: 20px; right: 20px; z-index: 9999; border-radius: 50%; width: 50px; height: 50px;">
+        <i class="bi bi-sun-fill" id="themeIcon"></i>
+    </button>
+
     <nav class="navbar navbar-expand-lg bg-body shadow-sm fixed-top" data-aos="fade-down">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="<?php echo $basePath; ?>index.php">
                 <img src="https://rbpmedia.id/assets/logo.png" alt="Logo" height="40" id="navbarLogo">
             </a>
             
-            <!-- Mobile toggle button -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <!-- Collapsible content -->
             <div class="collapse navbar-collapse" id="navbarContent">
-                <!-- Navigation Menu -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="<?php echo $basePath; ?>index.php">
                             <i class="bi bi-house me-1"></i>Beranda
                         </a>
                     </li>
                     
                     <?php if (isUserLoggedIn()): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="#materials">
+                            <a class="nav-link" href="<?php echo $basePath; ?>index.php#materials">
                                 <i class="bi bi-grid me-1"></i>Materi
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#progress">
+                            <a class="nav-link" href="<?php echo $basePath; ?>index.php#progress">
                                 <i class="bi bi-graph-up me-1"></i>Progress
                             </a>
                         </li>
@@ -60,10 +65,10 @@ $userRole = getUserRole();
                                     <i class="bi bi-gear me-1"></i>Admin
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="admin/dashboard.php">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="admin/users.php">Kelola Users</a></li>
-                                    <li><a class="dropdown-item" href="admin/materials.php">Kelola Materi</a></li>
-                                    <li><a class="dropdown-item" href="admin/reports.php">Laporan</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo $basePath; ?>admin/dashboard.php">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo $basePath; ?>admin/users.php">Kelola Users</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo $basePath; ?>admin/materials.php">Kelola Materi</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo $basePath; ?>admin/reports.php">Laporan</a></li>
                                 </ul>
                             </li>
                         <?php elseif ($userRole === 'instructor'): ?>
@@ -72,24 +77,17 @@ $userRole = getUserRole();
                                     <i class="bi bi-mortarboard me-1"></i>Pengajar
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="instructor/dashboard.php">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="instructor/students.php">Siswa Saya</a></li>
-                                    <li><a class="dropdown-item" href="instructor/materials.php">Materi Saya</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo $basePath; ?>instructor/dashboard.php">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo $basePath; ?>instructor/students.php">Siswa Saya</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo $basePath; ?>instructor/materials.php">Materi Saya</a></li>
                                 </ul>
                             </li>
                         <?php endif; ?>
                     <?php endif; ?>
                 </ul>
                 
-                <!-- User Actions -->
                 <div class="d-flex align-items-center">
-                    <!-- Theme Toggle -->
-                    <button class="btn me-2" id="themeToggle" title="Toggle Theme">
-                        <i class="bi bi-sun-fill" id="themeIcon"></i>
-                    </button>
-                    
                     <?php if (isUserLoggedIn()): ?>
-                        <!-- User Info & Menu -->
                         <div class="dropdown me-2">
                             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle me-1"></i>
@@ -108,7 +106,7 @@ $userRole = getUserRole();
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item" href="profile.php">
+                                    <a class="dropdown-item" href="<?php echo $basePath; ?>profile.php">
                                         <i class="bi bi-person me-2"></i>Profil Saya
                                     </a>
                                 </li>
@@ -118,7 +116,7 @@ $userRole = getUserRole();
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="settings.php">
+                                    <a class="dropdown-item" href="<?php echo $basePath; ?>settings.php">
                                         <i class="bi bi-gear me-2"></i>Pengaturan
                                     </a>
                                 </li>
@@ -131,7 +129,6 @@ $userRole = getUserRole();
                             </ul>
                         </div>
                     <?php else: ?>
-                        <!-- Login/Register Buttons -->
                         <div class="d-flex flex-wrap gap-2">
                             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
                                 <i class="bi bi-box-arrow-in-right me-1"></i>
@@ -141,9 +138,10 @@ $userRole = getUserRole();
                                 <i class="bi bi-person-plus me-1"></i>
                                 <span class="d-none d-sm-inline">Daftar</span>
                             </button>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#idModal">
-                                <i class="bi bi-card-list me-1"></i>
-                                <span class="d-none d-sm-inline">Demo ID</span>
+                            <button class="btn btn-sm btn-outline-info <?php echo $progressId ? 'btn-info text-white' : ''; ?>" data-bs-toggle="modal" data-bs-target="#progressIdModal">
+                                <i class="bi bi-graph-up me-1"></i>
+                                <span class="d-none d-sm-inline"><?php echo $progressId ? 'ID: ' . substr($progressId, 0, 6) . '...' : 'Progress ID'; ?></span>
+                                <span class="d-sm-none"><?php echo $progressId ? '✓' : 'ID'; ?></span>
                             </button>
                         </div>
                     <?php endif; ?>
@@ -152,7 +150,17 @@ $userRole = getUserRole();
         </div>
     </nav>
 
-    <!-- Alert Container for notifications -->
-    <div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 9999; margin-top: 70px;">
-        <!-- Dynamic alerts will be inserted here -->
-    </div>
+    <div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 9998; margin-top: 70px;"></div>
+
+    <!-- Load JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="<?php echo $basePath; ?>assets/js/script.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    </script>
